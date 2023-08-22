@@ -2,31 +2,31 @@
 
 ---
 
-## Kubernetes network plugins
+## Kubernetes Network Plugins
 
 Kubernetes employs a network plugin system to accommodate the diverse range of networking approaches preferred by different users. This flexibility enables support for various scenarios. The central network plugin utilized is CNI (Container Network Interface), which will be examined in-depth. However, Kubernetes also provides a simpler alternative called Kubenet.
 
 Before delving into specifics, it's crucial to grasp the fundamentals of Linux networking, albeit only a fraction of the extensive topic. This knowledge serves as the groundwork for comprehending Kubernetes networking, as it's built upon standard Linux networking principles.
 
-### Basic Linux networking
+### Basic Linux Networking
 
 In Linux, the default setup involves a single network space where all physical network interfaces are accessible. However, this single space can be further divided into multiple logical namespaces. This division is especially significant in the context of container networking.
 
-#### IP addresses and ports
+#### IP Addresses and Ports
 
 IP addresses serve as identifiers for network entities. Servers have the ability to listen for incoming connections on various ports, while clients can establish connections (TCP) or transmit/receive data (UDP) to servers within their network.
 
-#### Network namespaces
+#### Network Namespaces
 
 Namespaces gather network devices together, enabling communication among servers within the same namespace while restricting access to servers in other namespaces, even if they're on the same physical network. The connection of networks or network segments is achieved through mechanisms like bridges, switches, gateways, and routing.
 
-#### Subnets, netmasks, and CIDRs
+#### Subnets, Netmasks, and CIDRs
 
 Networks benefit from precise segmentation, particularly when designing and managing them. Dividing networks into smaller subnets with shared prefixes is a common approach. These subnets can be defined using bitmasks that determine the subnet's size, specifying how many hosts it can accommodate. For instance, a netmask of 255.255.255.0 designates the first three octets for routing, leaving room for only 256 (technically 254) individual hosts.
 
 Classless Inter-Domain Routing (CIDR) notation is frequently used due to its conciseness and ability to encode more information. CIDR allows the consolidation of hosts from various legacy classes (A, B, C, D, E). For example, 172.27.15.0/24 indicates that the first 24 bits (3 octets) are allocated for routing purposes.
 
-#### Virtual Ethernet devices
+#### Virtual Ethernet Devices
 
 Virtual Ethernet (veth) devices emulate physical network devices. By creating a veth device connected to a physical device, you can allocate this veth (and the corresponding physical device) to a specific namespace. In doing so, devices from other namespaces are unable to directly access it, even if they are physically located on the same local network.
 
@@ -38,7 +38,7 @@ Bridges link various network segments to form a unified network, facilitating co
 
 Routing establishes connections between distinct networks, often using routing tables to guide network devices in directing packets toward their intended destinations. This process involves various network components, including routers, gateways, switches, firewalls, and even standard Linux systems.
 
-#### Maximum transmission unit
+#### Maximum Transmission Unit
 
 The maximum transmission unit (MTU) dictates the maximum packet size, such as 1,500 bytes for Ethernet networks. A larger MTU enhances the payload-to-header ratio, beneficial for efficiency. However, larger MTUs decrease minimum latency as complete packet arrival is required. Additionally, bigger packets demand complete retransmission in case of failures, impacting reliability.
 
@@ -100,7 +100,7 @@ In traditional Kubernetes routing, kube-proxy plays a pivotal role. This user sp
 
 ---
 
-## Kubernetes networking solutions
+## Kubernetes Networking Solutions
 
 ### The Calico project
 
@@ -129,7 +129,7 @@ To sum up, Weave Net streamlines networking complexities, enabling developers to
 
 Cilium, a project incubated by the Cloud Native Computing Foundation (CNCF), centers around eBPF-driven networking, security, and observability, complemented by its Hubble project.
 
-#### Eﬃcient IP allocation and routing
+#### Eﬃcient IP Allocation and Routing
 
 Cilium offers diverse networking capabilities, supporting various models to facilitate seamless connectivity within and across clusters:
 
@@ -137,11 +137,11 @@ Cilium offers diverse networking capabilities, supporting various models to faci
 
 2. **Native Routing Model:** In this approach, Kubernetes utilizes the regular routing table of the Linux host. Application containers' IP addresses must be routable within the existing network infrastructure. Native Routing mode is more advanced and requires familiarity with the underlying networking setup. It is well-suited for native IPv6 networks, cloud network routers, or when utilizing custom routing daemons.
 
-#### Identity-based service-to-service communication
+#### Identity-Based Service-to-Service Communication
 
 Cilium introduces a security management aspect that assigns a security identity to clusters of application containers governed by shared security policies. This identity becomes linked to all network packets originating from these containers. Through this approach, Cilium enables the validation of identity upon packet reception at the destination node. The management of security identities is facilitated through a key-value store, streamlining the secure and efficient administration of identities within the Cilium networking framework.
 
-#### Load balancing
+#### Load Balancing
 
 Cilium offers a distributed load balancing solution for managing traffic between application containers and external services, serving as an alternative to kube-proxy. This load balancing functionality employs efficient eBPF-powered hashtables, a more scalable approach compared to traditional iptables techniques. Cilium ensures high-performance load balancing while optimizing the utilization of network resources.
 
@@ -149,7 +149,7 @@ Cilium stands out in east-west load balancing by performing streamlined service-
 
 For north-south load balancing, Cilium's eBPF implementation is finely tuned for maximum performance. It seamlessly integrates with eXpress Data Path (XDP) and supports advanced load balancing techniques like Direct Server Return (DSR) and Maglev consistent hashing. These capabilities enable efficient offloading of load balancing tasks from the source host, contributing to superior performance and scalability.
 
-#### Bandwidth management
+#### Bandwidth Management
 
 Cilium introduces effective bandwidth management by utilizing efficient Earliest Departure Time (EDT)-based rate-limiting with eBPF, specifically for egress traffic. This approach notably minimizes transmission tail latencies for applications, leading to improved performance.
 
@@ -161,19 +161,19 @@ For heightened observability, the Hubble observability platform offers additiona
 
 ---
 
-## Using network policies
+## Using Network Policies
 
 The Kubernetes network policy revolves around managing network traffic to specific pods and namespaces. In the context of a Kubernetes environment with numerous microservices orchestrated, effective management of networking and pod connectivity is vital. It's crucial to note that this policy isn't primarily a security mechanism. If an attacker can access the internal network, they can likely create pods that adhere to the existing network policy and communicate freely with other pods. It's important to recognize the strong interplay between the chosen networking solution and the implementation of network policy atop it.
 
-### Understanding the Kubernetes network policy design
+### Understanding the Kubernetes Network Policy Design
 
 A network policy in Kubernetes establishes communication regulations for pods and other network endpoints in the cluster. Utilizing labels, it identifies specific pods and enforces whitelist rules to govern traffic access to those pods. These rules work alongside the namespace-level isolation policy and enable supplementary traffic based on defined criteria. Through network policy configuration, administrators gain the ability to refine and limit communication between pods, enhancing security and segmenting the network within the cluster.
 
-### Network policies and CNI plugins
+### Network Policies and CNI Plugins
 
 Network policies and CNI plugins have a complex interplay. Certain CNI plugins handle both network connectivity and network policies, while others address only one of these aspects. However, some plugins can work together, with one plugin managing connectivity and another handling policies. For instance, Calico and Flannel can collaborate in this manner. This dynamic interaction adds flexibility to how network policies are implemented within Kubernetes.
 
-### Implementing network policies
+### Implementing Network Policies
 
 The network policy API in Kubernetes is a standardized interface, but its implementation is closely linked to the networking solution in use. This entails having a specialized agent or gatekeeper on each node, like Cilium's eBPF-based kernel implementation. This agent performs the following tasks:
 
