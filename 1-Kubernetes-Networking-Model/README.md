@@ -24,15 +24,15 @@ The following topics will be covered:
 - Lookup and discovery
 - DNS in Kubernetes
 
-### Container to container communication
+### Container to Container Communication
 
 In the Kubernetes environment, a running pod is always allocated to a single physical or virtual node. This arrangement ensures that all containers within the pod operate on the same node and can establish communication using various means, including local filesystem access, inter-process communication mechanisms, and utilizing the localhost interface along with familiar ports. The absence of port collisions between different pods is guaranteed due to each pod's distinct IP address. When a container within a pod uses localhost, this pertains exclusively to the pod's IP address. For instance, if container 1 in pod 1 connects to port 1234—a port listened to by container 2 in the same pod—it won't conflict with another container in a different pod on the same node that also employs port 1234. However, when exposing ports to the host, it's essential to exercise caution regarding pod-to-node affinity. This challenge can be effectively managed through mechanisms like Daemonsets and pod anti-affinity.
 
-### Pod to pod communication
+### Pod to Pod Communication
 
 In Kubernetes, pods are assigned IP addresses that are visible on the network (not confined to the node), enabling direct communication without the need for NAT, tunnels, or proxies. This setup allows the use of well-known port numbers for straightforward communication. The internal IP address of a pod aligns with its external IP address as perceived by other pods within the cluster network, although it remains concealed from the external world. Consequently, standard naming and discovery mechanisms like Domain Name System (DNS) operate seamlessly without additional configuration.
 
-### Pod to service communication
+### Pod to Service Communication
 
 Pods within a Kubernetes cluster can communicate directly via IP addresses and well-known ports. However, given the dynamic nature of pod creation and destruction, knowing each pod's IP address becomes impractical. To address this, Kubernetes employs the service resource as a stable and indirection layer. This layer remains consistent even as the set of actual pods responding to requests evolves.
 
@@ -44,23 +44,23 @@ The diagram illustrates how an external load balancer sends traffic to an arbitr
 
 ![External load balancer sending traffic to an arbitrary node and the kube-proxy](/architecture-diagram/External%20load%20balancer%20sending%20traffic.png)
 
-### Lookup and discovery
+### Lookup and Discovery
 
 For effective communication between pods and containers, it's crucial for them to discover each other's presence. There exist multiple methods by which containers can locate other containers or announce their own availability.
 
-#### Self-registration
+#### Self-Registration
 
 Containers within a pod can communicate effectively by registering their IP addresses and ports with a dedicated registration service. This service allows containers to find each other and establish connections. When a container launches, it can self-register by connecting to the registration service and sharing its IP address and port. Other containers can then query the registration service to retrieve the IP addresses and ports of all registered containers, enabling direct connections.
 
 Self-registration offers benefits such as simplified container tracking and the ability for containers to apply intelligent policies. Containers can temporarily unregister themselves based on local conditions, enhancing dynamic load balancing. However, ungraceful container termination requires mechanisms like periodic pinging or keep-alive messages to detect unavailable containers. While this approach ensures efficient communication and decentralized load balancing, it introduces the need for an additional component, the registration service, which containers must be aware of to locate and interact with other containers.
 
-#### Services and endpoints
+#### Services and Endpoints
 
 Kubernetes services function as standardized registration services. Pods associated with a service are automatically registered through their labels. Other pods can access service endpoints to discover all the pods linked to the service or communicate directly with the service, which routes the message to a backend pod.
 
 Typically, pods send messages to the service itself, which then forwards them to one of the backend pods. To maintain dynamic membership, a combination of factors like deployment replica counts, health checks, readiness checks, and horizontal pod autoscaling can be utilized.
 
-#### Loosely coupled connectivity with queues
+#### Loosely Coupled Connectivity with Queues
 
 Containers can communicate seamlessly without requiring knowledge of IP addresses, ports, or service identifiers by utilizing asynchronous and decoupled communication. This approach is particularly useful for systems comprised of loosely coupled components that remain unaware of one another's existence. Queues serve as facilitators for such loosely coupled systems. Containers listen to messages from queues, respond, perform tasks, and post messages back to the queue for tracking purposes.
 
@@ -80,7 +80,7 @@ However, there are downsides to using queues:
 
 In summary, queues offer an excellent mechanism for large-scale systems, providing coordination benefits even within extensive Kubernetes clusters.
 
-#### Kubernetes ingress
+#### Kubernetes Ingress
 
 Kubernetes provides an ingress resource and controller that facilitate the exposure of Kubernetes services to external entities. While it's possible to handle this process manually, many tasks involved in defining an ingress are typically shared among applications of a similar type, such as web applications, CDNs, or DDoS protectors. It's also an option to craft custom ingress objects.
 
