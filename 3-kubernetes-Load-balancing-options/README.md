@@ -2,7 +2,7 @@
 
 ---
 
-## Load balancing options
+## Load Balancing Options
 
 Load balancing is a vital aspect of dynamic systems like Kubernetes, where nodes, virtual machines (VMs), and pods frequently enter and exit the environment. Clients connecting to the cluster face challenges in keeping track of available entities to handle their requests. Client-side load balancing, where clients manage this complexity, can be complex and inefficient. Instead, server-side load balancing is a proven method that abstracts this complexity away from clients.
 
@@ -22,7 +22,7 @@ There are various load balancing options available, both for external and intern
 
 7. **Kubernetes Gateway API**: An evolving solution for handling traffic ingress into Kubernetes clusters.
 
-### External load balancers
+### External Load Balancers
 
 An external load balancer operates outside the Kubernetes cluster and requires an external load balancer provider. Kubernetes communicates with this provider to set up configurations, such as health checks and firewall rules, and to obtain the external IP address for the load balancer. This setup enables the external load balancer to manage traffic to the cluster's services.
 
@@ -30,11 +30,11 @@ An external load balancer operates outside the Kubernetes cluster and requires a
 
 ![AWS Load Balancer](https://d2908q01vomqb2.cloudfront.net/fe2ef495a1152561572949784c16bf23abb28057/2022/11/18/Picture2-7.png)
 
-### Understanding external load balancing
+### Understanding External Load Balancing
 
 External load balancers distribute traffic at the node level. For example, if a service has four pods, with three on node A and one on node B, an external load balancer would divide the load evenly between the two nodes. As a result, the three pods on node A would each handle a third of the load (1/6 each), while the single pod on node B would handle the remaining half of the load. This distribution might be uneven. To address this, weights could be added in the future. To avoid such issues, strategies like pod anti-affinity or topology spread constraints can be used to evenly distribute pods across nodes.
 
-#### Service load balancers
+#### Service Load Balancers
 
 Service load balancing in Kubernetes is intended for internal traffic within the cluster and not for external load balancing. It is achieved using a service type called `clusterIP`. While it's possible to expose a service load balancer externally using the `NodePort` service type, this method has limitations. Curating Node ports to prevent conflicts across the cluster can be challenging and may not be suitable for production environments. Additionally, advanced features like SSL termination and HTTP caching might not be easily accessible with this approach.
 
@@ -78,7 +78,7 @@ In scenarios where a custom external load balancer like HAProxy is employed, the
 
 By adopting this method, external traffic can be efficiently routed to the appropriate pods without the unnecessary additional hop, enhancing performance and reducing latency.
 
-##### HAProxy inside the Kubernetes cluster
+##### HAProxy Inside the Kubernetes Cluster
 
 HAProxy has developed its own Kubernetes-aware ingress controller, which provides a seamless way to incorporate HAProxy into your Kubernetes environment. By using the HAProxy ingress controller, you can benefit from various capabilities:
 
@@ -137,7 +137,7 @@ Unlike the ingress API, which primarily involves an Ingress resource and an opti
 
 Overall, the Gateway API offers a more modular and flexible approach to managing networking and routing configurations in Kubernetes.
 
-#### Gateway API resources
+#### Gateway API Resources
 
 The GatewayClass in the Kubernetes Gateway API establishes standardized settings and behavior that can be shared across multiple gateways.
 
@@ -147,7 +147,7 @@ Routes play a crucial role in the Gateway API by mapping specific incoming reque
 
 ![AWS Load Balancer](https://gateway-api.sigs.k8s.io/images/api-model.png)
 
-#### Attaching routes to gateways
+#### Attaching Routes to Gateways
 
 Gateways and routes within the Kubernetes Gateway API can be linked together in various arrangements:
 
